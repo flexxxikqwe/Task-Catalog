@@ -33,8 +33,9 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolation(ex: ConstraintViolationException): ResponseEntity<ErrorResponse> {
+        val message = ex.constraintViolations.joinToString(", ") { "${it.propertyPath}: ${it.message}" }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.message ?: "Invalid Parameters"))
+            .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), message))
     }
 
     @ExceptionHandler(ServerWebInputException::class)

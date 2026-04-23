@@ -1,41 +1,43 @@
 # Task Catalog Backend
 
 ## Project Overview
-Task Catalog is a backend REST service for managing tasks. It allows creating, retrieving, updating status, and deleting tasks.
+Task Catalog is a backend REST service for managing tasks. It allows creating, retrieving, paginating, and deleting tasks with a focus on performance and explicit database control.
 
-## Stack
-- **Language**: Kotlin
-- **Framework**: Spring Boot 3.4.2
-- **Reactive Stack**: Spring WebFlux (for the API and Service layers)
-- **Database Access**: Spring JDBC `JdbcClient` (synchronous native SQL)
-- **Database**: H2 (In-memory for development)
+## Technical Stack
+- **Language**: Kotlin 1.9
+- **Framework**: Spring Boot 3.4.2 (WebFlux)
+- **Database Access**: Spring JDBC `JdbcClient` (Native SQL)
+- **Database**: H2 (In-memory)
 - **Migrations**: Flyway
-- **Build System**: Gradle Kotlin DSL
 - **Java Version**: 21
+- **Testing**: JUnit 5, Mockito, StepVerifier
 
-## Architecture Overview
-The project follows a layered architecture:
-- **Controller**: REST API endpoints, handles requests and returns `Mono`/`Flux`.
-- **Service**: Business logic, orchestrates repository calls and maps entities to DTOs. Reactor types are used here.
-- **Repository**: Data access using synchronous `JdbcClient`.
-- **Model**: Domain entities.
-- **DTO**: Request and Response data transfer objects.
-- **Mapper**: Component for converting between models and DTOs.
-- **Exception**: Custom exceptions and a global exception handler.
+## Architecture
+The application uses a layered architecture designed for scalability:
+- **Reactive Service Layer**: Exposes `Mono` and `Flux` types. It bridges the blocking Repository calls using `Schedulers.boundedElastic()` to keep the WebFlux event loop responsive.
+- **Explicit Repository Layer**: Uses `JdbcClient` with native SQL to provide transparent and optimized database access without the complexity of an ORM.
+- **Strict Validation**: Leverages `jakarta.validation` at both DTO and Controller levels to ensure data integrity at the edge.
 
-### Synchronous vs. Reactive
-The Repository layer uses the synchronous `JdbcClient` with native SQL for simplicity and explicit control over queries. To integrate this into a reactive WebFlux flow, blocking calls are wrapped in `Mono.fromCallable` or `Mono.fromRunnable` and executed on a `Schedulers.boundedElastic()` thread pool in the Service layer.
+## API Documentation
 
-## Run Instructions
-To run the application:
+### Base URL: `/api/tasks`
+
+| Method | Endpoint | Description | Status |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/` | Create a new task. | 201 |
+| **GET** | `/{id}` | Get task details. | 200 / 404 |
+| **GET** | `?page=X&size=Y&status=Z` | List tasks (Sorted by created_at DESC). | 200 / 400 |
+| **PATCH** | `/{id}/status` | Update task status. | 200 / 404 |
+| **DELETE** | `/{id}` | Delete a task. | 204 / 404 |
+
+## Running the Project
 ```bash
 ./gradlew bootRun
 ```
-The server will start on port 3000.
+The application starts on port **3000**.
 
-## API Endpoints
-- `POST /api/tasks`: Create a new task.
-- `GET /api/tasks/{id}`: Get task details by ID.
-- `GET /api/tasks?page=0&size=10&status=NEW`: List tasks with pagination and status filtering.
-- `PATCH /api/tasks/{id}/status`: Update task status.
-- `DELETE /api/tasks/{id}`: Delete a task.
+## Running Tests
+```bash
+./gradlew test
+```
+The test suite covers Service-tier business logic and Controller-tier validation/status mapping.
