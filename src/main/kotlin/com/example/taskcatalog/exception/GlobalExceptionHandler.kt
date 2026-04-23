@@ -1,10 +1,12 @@
 package com.example.taskcatalog.exception
 
+import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
+import org.springframework.web.server.ServerWebInputException
 import java.time.LocalDateTime
 
 @RestControllerAdvice
@@ -27,6 +29,18 @@ class GlobalExceptionHandler {
         val message = ex.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), message))
+    }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolation(ex: ConstraintViolationException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.message ?: "Invalid Parameters"))
+    }
+
+    @ExceptionHandler(ServerWebInputException::class)
+    fun handleInputException(ex: ServerWebInputException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid input: ${ex.reason ?: ex.message}"))
     }
 
     @ExceptionHandler(Exception::class)
