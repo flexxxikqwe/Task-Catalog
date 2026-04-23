@@ -130,6 +130,16 @@ class TaskControllerTest {
     }
 
     @Test
+    fun `PATCH updateTaskStatus returns 400 for invalid body`() {
+        webClient.patch()
+            .uri("/api/tasks/1/status")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{}")
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
     fun `DELETE deleteTask returns 204 No Content`() {
         `when`(taskService.deleteTask(1L)).thenReturn(Mono.empty())
 
@@ -137,5 +147,15 @@ class TaskControllerTest {
             .uri("/api/tasks/1")
             .exchange()
             .expectStatus().isNoContent
+    }
+
+    @Test
+    fun `DELETE deleteTask returns 404 when task not found`() {
+        `when`(taskService.deleteTask(1L)).thenReturn(Mono.error(TaskNotFoundException("Task 1 not found")))
+
+        webClient.delete()
+            .uri("/api/tasks/1")
+            .exchange()
+            .expectStatus().isNotFound
     }
 }

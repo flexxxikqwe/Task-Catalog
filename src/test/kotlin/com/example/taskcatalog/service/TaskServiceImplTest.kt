@@ -96,6 +96,16 @@ class TaskServiceImplTest {
     }
 
     @Test
+    fun `updateTaskStatus should throw TaskNotFoundException when task not found`() {
+        val request = UpdateTaskStatusRequest(TaskStatus.DONE)
+        `when`(taskRepository.updateStatus(1L, TaskStatus.DONE)).thenReturn(false)
+
+        StepVerifier.create(taskService.updateTaskStatus(1L, request))
+            .expectError(TaskNotFoundException::class.java)
+            .verify()
+    }
+
+    @Test
     fun `deleteTask should complete when deletion is successful`() {
         `when`(taskRepository.deleteById(1L)).thenReturn(true)
 
