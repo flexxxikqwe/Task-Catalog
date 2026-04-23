@@ -18,23 +18,20 @@ class TaskController(private val taskService: TaskService) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createTask(@Valid @RequestBody request: CreateTaskRequest): Mono<TaskResponse> {
-        // Skeleton for phase 1
         return Mono.empty()
     }
 
     @GetMapping("/{id}")
     fun getTaskById(@PathVariable id: Long): Mono<TaskResponse> {
-        // Skeleton for phase 1
         return Mono.empty()
     }
 
     @GetMapping
     fun getTasks(
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam page: Int,
+        @RequestParam size: Int,
         @RequestParam(required = false) status: TaskStatus?
     ): Mono<PageResponse<TaskResponse>> {
-        // Skeleton for phase 1
         return Mono.empty()
     }
 
@@ -43,14 +40,12 @@ class TaskController(private val taskService: TaskService) {
         @PathVariable id: Long,
         @Valid @RequestBody request: UpdateTaskStatusRequest
     ): Mono<TaskResponse> {
-        // Skeleton for phase 1
         return Mono.empty()
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteTask(@PathVariable id: Long): Mono<Void> {
-        // Skeleton for phase 1
         return Mono.empty()
     }
 }

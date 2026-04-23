@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class TaskMapper {
     fun toResponse(task: Task): TaskResponse {
         return TaskResponse(
-            id = task.id ?: 0,
+            id = task.id ?: throw IllegalStateException("Task ID must not be null when mapping to response"),
             title = task.title,
             description = task.description,
             status = task.status,
