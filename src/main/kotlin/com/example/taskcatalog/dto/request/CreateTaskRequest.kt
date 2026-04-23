@@ -1,0 +1,12 @@
+package com.example.taskcatalog.dto.request
+
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
+
+data class CreateTaskRequest(
+    @field:NotBlank(message = "Title must not be blank")
+    @field:Size(min = 3, max = 100, message = "Title length must be from 3 to 100")
+    val title: String,
+
+    val description: String? = null
+)

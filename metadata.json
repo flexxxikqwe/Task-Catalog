@@ -1,0 +1,6 @@
+{
+  "name": "Task Catalog Backend",
+  "description": "A Spring Boot + Kotlin REST service for managing tasks using JdbcClient and WebFlux.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
